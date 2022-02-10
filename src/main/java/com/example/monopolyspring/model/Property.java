@@ -2,20 +2,78 @@ package com.example.monopolyspring.model;
 
 public class Property {
     private String streetName;
-    private String color;
+    private String grouping;
+    private int price;
+    private int rent;
+    private boolean purchasable;
+    private boolean canBuildOn;
+    private boolean isMortgaged;
+
     private Player owner;
 
-    private int price;
     private int numberOfHouses;
     private int numberOfHotels;
 
-    public Property(String streetName, String color, int price) {
+    public Property(String streetName, String grouping, int price, int rent, boolean purchasable, boolean canBuildOn) {
         this.streetName = streetName;
-        this.color = color;
+        this.grouping = grouping;
         this.price = price;
+        this.rent = rent;
+        this.purchasable = purchasable;
+        this.canBuildOn = canBuildOn;
         this.owner = null;
         this.numberOfHotels = 0;
         this.numberOfHouses = 0;
+        this.isMortgaged = false;
+    }
+
+
+    public boolean isBuyable(){
+        return purchasable & owner==null;
+    }
+
+    public int getHouseCost(){
+        if(price < 140) {
+            return 50;
+        }
+        else if(price < 220){
+            return 100;
+        }
+        else if(price < 300){
+            return 150;
+        }
+        else return 200;
+    }
+
+    public int getPayableRent(){
+        if(numberOfHouses == 0) {
+            return rent;
+        }
+        else if(numberOfHotels == 1){
+            return 75*rent;
+        }
+        else if(numberOfHouses == 1){
+            return 5*rent;
+        }
+        else if(numberOfHouses == 2){
+            return 15*rent;
+        }
+        else if(numberOfHouses == 3){
+            return 45*rent;
+        }
+        else return 55*rent;
+    }
+
+    public boolean buy(Player player){
+        if(this.owner == player) return false;
+
+        if(player.getPlayerBalance() > price){
+            player.setPlayerBalance(player.getPlayerBalance() - price);
+            this.owner = player;
+            player.addOwnedProperty(this);
+            return true;
+        }
+        return false;
     }
 
     public String getStreetName() {
@@ -26,12 +84,12 @@ public class Property {
         this.streetName = streetName;
     }
 
-    public String getColor() {
-        return color;
+    public String getGrouping() {
+        return grouping;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setGrouping(String grouping) {
+        this.grouping = grouping;
     }
 
     public Player getOwner() {
@@ -64,5 +122,49 @@ public class Property {
 
     public void setNumberOfHotels(int numberOfHotels) {
         this.numberOfHotels = numberOfHotels;
+    }
+
+    public boolean isPurchasable() {
+        return purchasable;
+    }
+
+    public void setPurchasable(boolean purchasable) {
+        this.purchasable = purchasable;
+    }
+
+    public boolean isCanBuildOn() {
+        return canBuildOn;
+    }
+
+    public void setCanBuildOn(boolean canBuildOn) {
+        this.canBuildOn = canBuildOn;
+    }
+
+    public int getRent() {
+        return rent;
+    }
+
+    public void setRent(int rent) {
+        this.rent = rent;
+    }
+
+    public boolean isMortgaged() {
+        return isMortgaged;
+    }
+
+    public void setMortgaged(boolean mortgaged) {
+        isMortgaged = mortgaged;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "streetName='" + streetName + '\'' +
+                ", color='" + grouping + '\'' +
+                ", price=" + price +
+//                ", purchasable=" + purchasable +
+//                ", numberOfHouses=" + numberOfHouses +
+//                ", numberOfHotels=" + numberOfHotels +
+                '}';
     }
 }
