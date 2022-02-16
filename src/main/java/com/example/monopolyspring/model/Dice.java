@@ -1,17 +1,18 @@
 package com.example.monopolyspring.model;
 
+import java.util.Random;
+
 public class Dice {
     int die1;
     int die2;
-
+    Random random = new Random();
     public Dice() {
     }
 
     public int roll(){
-        int min = 1;
-        int max = 6;
-        die1 = (int)Math.floor(Math.random()*(max-min+1)+min);
-        die2 = (int)Math.floor(Math.random()*(max-min+1)+min);
+        int max = 5;
+        die1 = random.nextInt(max)+1;
+        die2 = random.nextInt(max)+1;
         return getRolledSum();
     }
 

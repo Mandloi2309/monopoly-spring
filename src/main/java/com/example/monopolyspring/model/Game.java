@@ -73,7 +73,7 @@ public class Game {
             }
 
         }
-        else if(property.getOwner() != null){
+        else if(property.getOwner() != null && !property.getOwner().equals(player)){
             Player propertyOwner = property.getOwner();
             int rent = property.getPayableRent();
             if(player.isAbleToPay(rent)){
@@ -98,7 +98,7 @@ public class Game {
         for(Player p:players){
             if(p.isBankrupt()) numOfBankruptPlayers++;
         }
-        return numOfBankruptPlayers == 1;
+        return numOfBankruptPlayers == players.size()-1;
     }
 
 

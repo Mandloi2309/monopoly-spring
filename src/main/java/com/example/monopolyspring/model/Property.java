@@ -29,7 +29,7 @@ public class Property {
 
 
     public boolean isBuyable(){
-        return purchasable & owner==null;
+        return purchasable && owner==null;
     }
 
     public int getHouseCost(){
