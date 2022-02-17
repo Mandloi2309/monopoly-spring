@@ -58,6 +58,8 @@ public class Player {
         isBankrupt = bankrupt;
     }
 
+    public List<Property> getOwnedProperties() {return ownedProperties;}
+
     @Override
     public String toString() {
         return "Player{" +

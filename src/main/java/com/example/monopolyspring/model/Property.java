@@ -67,7 +67,7 @@ public class Property {
     public boolean buy(Player player){
         if(this.owner == player) return false;
 
-        if(player.getPlayerBalance() > price){
+        if(player.getPlayerBalance() > price && this.owner == null){
             player.setPlayerBalance(player.getPlayerBalance() - price);
             this.owner = player;
             player.addOwnedProperty(this);
@@ -80,17 +80,13 @@ public class Property {
         return streetName;
     }
 
-    public void setStreetName(String streetName) {
-        this.streetName = streetName;
-    }
+    //public void setStreetName(String streetName) {this.streetName = streetName;}
 
     public String getGrouping() {
         return grouping;
     }
 
-    public void setGrouping(String grouping) {
-        this.grouping = grouping;
-    }
+    //public void setGrouping(String grouping) {this.grouping = grouping;}
 
     public Player getOwner() {
         return owner;
@@ -104,9 +100,7 @@ public class Property {
         return price;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
+    //public void setPrice(int price){ this.price = price;}
 
     public int getNumberOfHouses() {
         return numberOfHouses;
@@ -144,9 +138,7 @@ public class Property {
         return rent;
     }
 
-    public void setRent(int rent) {
-        this.rent = rent;
-    }
+    //public void setRent(int rent) {this.rent = rent;}
 
     public boolean isMortgaged() {
         return isMortgaged;
