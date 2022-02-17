@@ -6,7 +6,7 @@ import com.example.monopolyspring.model.Player;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-@Component
+
 public class MonopolyCli implements CommandLineRunner {
 
 
