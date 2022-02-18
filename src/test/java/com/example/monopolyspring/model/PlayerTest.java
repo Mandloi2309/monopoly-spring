@@ -7,18 +7,21 @@ public class PlayerTest {
     Player player1 = new Player("Player 1", "Ship");
     Property property = new Property("Mediterranean Avenue", "Purple", 60, 2,true, true);
     Token horse = new Token("Horse");
+
     @Test
     public void given_Player_when_Initialised_then_showPlayerAttributes() {
         Assert.assertEquals("Player 1", player1.getPlayerName());
         Assert.assertEquals(500, player1.getPlayerBalance());
         Assert.assertEquals("Ship", player1.getToken().getShape());
     }
+
     @Test void given_Player_when_Initialised_then_updatePlayerAttributes(){
             player1.setPlayerName("Alpha");
             Assert.assertEquals("Alpha",player1.getPlayerName());
             player1.setToken(horse);
             Assert.assertEquals("Horse", player1.getToken().getShape());
     }
+
     @Test
     public void given_Player_when_boughtProperty_then_showPropertyAndUpdateBalance(){
         player1.addOwnedProperty(property);

@@ -41,7 +41,12 @@ public class GameController {
         boolean isGameStarted = gameService.isGameStarted();
         if(isGameStarted) return "Game Started";
         return "Game not Started";
-
+    }
+    @GetMapping("/performAction")
+    public String performAction(@RequestParam(value="name") String name, @RequestParam(value="action") String action){
+        boolean isGameStarted = gameService.isGameStarted();
+        if(isGameStarted) gameService.takeAction(name, action);
+        return "Game not Started";
     }
 
 

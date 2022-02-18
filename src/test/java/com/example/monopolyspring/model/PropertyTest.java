@@ -53,6 +53,7 @@ public class PropertyTest {
         Assert.assertEquals(6*55, property.getPayableRent());
 
     }
+
     @Test
     public void given_propertyOwned_when_hotelBuilt_then_checkRent(){
         property.setNumberOfHotels(1);
