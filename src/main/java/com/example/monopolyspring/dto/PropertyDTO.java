@@ -6,15 +6,13 @@ public class PropertyDTO {
     int price;
     String ownerName;
     int numberOfHouses;
-    int numberOfHotels;
 
-    public PropertyDTO(String propertyName, String propertyGroup, int price, String ownerName, int numberOfHouses, int numberOfHotels) {
+    public PropertyDTO(String propertyName, String propertyGroup, int price, String ownerName, int numberOfHouses) {
         this.propertyName = propertyName;
         this.propertyGroup = propertyGroup;
         this.price = price;
         this.ownerName = ownerName;
         this.numberOfHouses = numberOfHouses;
-        this.numberOfHotels = numberOfHotels;
     }
 
     public String getPropertyName() {
@@ -37,7 +35,4 @@ public class PropertyDTO {
         return numberOfHouses;
     }
 
-    public int getNumberOfHotels() {
-        return numberOfHotels;
-    }
 }

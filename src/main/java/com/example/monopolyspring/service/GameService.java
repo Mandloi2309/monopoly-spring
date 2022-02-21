@@ -141,26 +141,40 @@ public class GameService {
                     }
                 }
             }
-            if(action.equals("build")){
-                canBuildHouse(activePlayer, property);
+            if(action.equals("build") && canBuildHouse(activePlayer, property)){
+
+                buildHouseOnProperty(activePlayer, property);
             }
+            //action: mortgage/demortgage
+            //          sell houses
+            //          sell it to bank (lower price)
         }
         return false;
+    }
+    // method to calculate price for mortgage/selling (75%bank).
+
+    //Refactor removing hotels to 5 houses. Property object: remove hotels
+
+    private void buildHouseOnProperty(Player player, Property property){
+        property.setNumberOfHouses(property.getNumberOfHouses()+1);
+        player.setPlayerBalance(player.getPlayerBalance()-property.getHouseCost());
     }
 
     public boolean canBuildHouse(Player player, Property property){
-        if (property.getOwner()!=null && property.getOwner().equals(player)
-                && isPlayerOwnerOfTheGroup(player, property) && property.isCanBuildOn()){
-
-            return true;
-        }
-        return false;
-
+         return  property.getOwner()!=null && property.getOwner().equals(player) && canPlayerAffordToBuildHouseOnProperty(player, property)
+                && isPlayerOwnerOfTheGroup(player, property) && property.isCanBuildOn() && canOneHouseBeBuiltOnProperty(property);
     }
-
-    private boolean doesGroupHaveOneLessProperty(Player player, Property property){
-        //if( && isPlayerOwnerOfTheGroup(player, property))
-
+    private boolean canPlayerAffordToBuildHouseOnProperty(Player player, Property property){
+        return player.getPlayerBalance() > property.getHouseCost();
+    }
+    private boolean canOneHouseBeBuiltOnProperty(Property property){
+        String groups = property.getGrouping();
+        if(property.getNumberOfHouses() == 5) return false;
+        for (Property p: board.getPropertiesByGroup(groups)){
+            int difference = property.getNumberOfHouses() + 1 - p.getNumberOfHouses();
+            if(Math.abs(difference) > 1 ) return false;
+        }
+        return true;
     }
     private boolean isPlayerOwnerOfTheGroup(Player player, Property property){
         String groups = property.getGrouping();
@@ -183,7 +197,7 @@ public class GameService {
             //check if no owner, then show no owner instead of null. Implement null checks
             String owner = "";
             if(p.getOwner() != null) owner = p.getOwner().getPlayerName();
-            properties.add(new PropertyDTO(p.getStreetName(), p.getGrouping(), p.getPrice(), owner, p.getNumberOfHouses(), p.getNumberOfHotels()));
+            properties.add(new PropertyDTO(p.getStreetName(), p.getGrouping(), p.getPrice(), owner, p.getNumberOfHouses()));
         }
         return properties;
     }

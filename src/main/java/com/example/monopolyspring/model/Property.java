@@ -12,7 +12,7 @@ public class Property {
     private Player owner;
 
     private int numberOfHouses;
-    private int numberOfHotels;
+    //private int numberOfHotels;
 
     public Property(String streetName, String grouping, int price, int rent, boolean purchasable, boolean canBuildOn) {
         this.streetName = streetName;
@@ -22,7 +22,7 @@ public class Property {
         this.purchasable = purchasable;
         this.canBuildOn = canBuildOn;
         this.owner = null;
-        this.numberOfHotels = 0;
+        //this.numberOfHotels = 0;
         this.numberOfHouses = 0;
         this.isMortgaged = false;
     }
@@ -49,9 +49,6 @@ public class Property {
         if(numberOfHouses == 0) {
             return rent;
         }
-        else if(numberOfHotels == 1){
-            return 75*rent;
-        }
         else if(numberOfHouses == 1){
             return 5*rent;
         }
@@ -61,7 +58,10 @@ public class Property {
         else if(numberOfHouses == 3){
             return 45*rent;
         }
-        else return 55*rent;
+        else if(numberOfHouses == 4){
+            return 55*rent;
+        }
+        else return 75*rent;
     }
 
     public boolean buy(Player player){
@@ -108,14 +108,6 @@ public class Property {
 
     public void setNumberOfHouses(int numberOfHouses) {
         this.numberOfHouses = numberOfHouses;
-    }
-
-    public int getNumberOfHotels() {
-        return numberOfHotels;
-    }
-
-    public void setNumberOfHotels(int numberOfHotels) {
-        this.numberOfHotels = numberOfHotels;
     }
 
     public boolean isPurchasable() {
