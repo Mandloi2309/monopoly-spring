@@ -19,6 +19,10 @@ public class Board {
         addPropertiesToBoard();
         createBoardGroups();
     }
+    public List<Property> getPropertiesByGroup(String group){
+        if(!boardGroups.containsKey(group)) return new ArrayList<>();
+        return boardGroups.get(group);
+    }
 
     private void createBoardGroups(){
         for(Property p:boardFields){
@@ -82,6 +86,10 @@ public class Board {
 
     public void setBoardFields(List<Property> boardFields) {
         this.boardFields = boardFields;
+    }
+
+    public Map<String, List<Property>> getBoardGroups() {
+        return boardGroups;
     }
 
     public void printBoard(){

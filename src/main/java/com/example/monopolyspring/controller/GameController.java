@@ -1,5 +1,6 @@
 package com.example.monopolyspring.controller;
 
+import com.example.monopolyspring.dto.BoardDTO;
 import com.example.monopolyspring.dto.DiceDTO;
 import com.example.monopolyspring.dto.PlayerDTO;
 import com.example.monopolyspring.model.Dice;
@@ -42,12 +43,23 @@ public class GameController {
         if(isGameStarted) return "Game Started";
         return "Game not Started";
     }
+    @GetMapping("/moveToken")
+    public List<PlayerDTO> moveToken(@RequestParam(value="name") String name){
+        gameService.movePlayerToken(name);
+        return gameService.getPlayerListDTO();
+    }
     @GetMapping("/performAction")
     public String performAction(@RequestParam(value="name") String name, @RequestParam(value="action") String action){
         boolean isGameStarted = gameService.isGameStarted();
         if(isGameStarted) gameService.takeAction(name, action);
         return "Game not Started";
     }
-
-
+    @GetMapping("/finishTurn")
+    public boolean finishTurn(){
+        return  gameService.finishTurn();
+    }
+    @GetMapping("/showBoard")
+    public BoardDTO showBoard(){
+        return gameService.getBoardDTO();
+    }
 }
