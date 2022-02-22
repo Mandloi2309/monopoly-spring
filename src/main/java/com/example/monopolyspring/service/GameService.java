@@ -144,11 +144,10 @@ public class GameService {
             else if(action.equals("sellHouse") && checkOwner(activePlayer, property)
                     && canPlayerSellHousesOnProperty(activePlayer, property)){
                 sellHouseOnProperty(activePlayer, property);
-
+                return true;
             }
 
             //action:
-            //          sell houses
             //          sell it to bank (lower price)
         }
         return false;
@@ -180,7 +179,15 @@ public class GameService {
     private boolean canPlayerSellHousesOnProperty(Player player, Property property){
         String groups = property.getGrouping();
         if(property.getNumberOfHouses() == 0) return false;
+        for (Property p: board.getPropertiesByGroup(groups)){
+            int difference = property.getNumberOfHouses() - p.getNumberOfHouses();
+            if(Math.abs(difference) > 1 ) return false;
+        }
         return true;
+    }
+    private void sellHouseOnProperty(Player player, Property property){
+        property.setNumberOfHouses(property.getNumberOfHouses()-1);
+        player.setPlayerBalance(player.getPlayerBalance()+ (property.getHouseCost()*50/100));
     }
     private void buildHouseOnProperty(Player player, Property property){
         property.setNumberOfHouses(property.getNumberOfHouses()+1);
