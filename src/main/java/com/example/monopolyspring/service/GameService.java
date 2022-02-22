@@ -34,11 +34,11 @@ public class GameService {
 
     public List<PlayerDTO> addPlayer(String playerName, String playerTokenName){
         if (isGameStarted) return getPlayerListDTO();
-        if (players.contains(new Player(playerName, playerTokenName))){
+        //if (players.contains(new Player(playerName, playerTokenName))){
             //List<String> arr = new ArrayList<String>(1);
             //arr.add("Failed to add the player, try a different name/token");
             //return arr;
-        }
+        //}
         else {
             players.add(new Player(playerName, playerTokenName));
         }
@@ -63,9 +63,7 @@ public class GameService {
         return isGameStarted;
     }
 
-
     public boolean finishTurn(){
-        //update the activePlayerIndex to the next player, make sure no overflow
         if (activePlayerIndex >= players.size()) {
             activePlayerIndex = 0;
         }else{
@@ -111,6 +109,7 @@ public class GameService {
         Player propertyOwner = property.getOwner();
         int rent = property.getPayableRent();
         if(activePlayer.isAbleToPay(rent)){
+            if(property.isMortgaged()) return false;
             activePlayer.setPlayerBalance(activePlayer.getPlayerBalance() - rent);
             propertyOwner.setPlayerBalance(propertyOwner.getPlayerBalance() + rent);
             return true;
@@ -119,49 +118,77 @@ public class GameService {
         return false;
     }
 
-    /**
-     * Returns true if the action was taken successfully, returns false otherwise
-     * @param playerName
-     * @param action
-     * @return true/false
-     */
-    // Build property rules: can you build a house, should own all prop in group, House difference should be of 1
-
     public boolean takeAction(String playerName, String action){
-        //check if playerName is the active player, don't let to take action otherwise
         Player activePlayer = players.get(activePlayerIndex);
         if (playerName == activePlayer.getPlayerName()){
             int currentTokenPosition = activePlayer.getToken().getBoardPosition();
             Property property = board.getBoardFields().get(currentTokenPosition);
-            if (action.equals("buy")){
-                if(property.getOwner() == null && property.isBuyable()){
-                    if(property.getPrice() < activePlayer.getPlayerBalance()){
-                        property.buy(activePlayer);
-                        return true;
-                    }
-                }
+            if (action.equals("buy") && canPlayerBuyProperty(activePlayer, property)){
+                property.buy(activePlayer);
+                return true;
             }
-            if(action.equals("build") && canBuildHouse(activePlayer, property)){
-
+            else if(action.equals("build") && canBuildHouse(activePlayer, property)){
                 buildHouseOnProperty(activePlayer, property);
+                return true;
             }
-            //action: mortgage/demortgage
+            else if(action.equals("mortgage") && checkOwner(activePlayer, property)
+                    && canPlayerMortgageTheProperty(property)){
+                mortgageTheProperty(activePlayer, property);
+                return true;
+            }
+            else if(action.equals("unmortgage") && checkOwner(activePlayer, property)
+                    && canPlayerUnmortgageProperty(activePlayer, property)){
+                unmortgageProperty(activePlayer, property);
+                return true;
+            }
+            else if(action.equals("sellHouse") && checkOwner(activePlayer, property)
+                    && canPlayerSellHousesOnProperty(activePlayer, property)){
+                sellHouseOnProperty(activePlayer, property);
+
+            }
+
+            //action:
             //          sell houses
             //          sell it to bank (lower price)
         }
         return false;
     }
-    // method to calculate price for mortgage/selling (75%bank).
-
-    //Refactor removing hotels to 5 houses. Property object: remove hotels
-
+    private boolean checkOwner(Player player, Property property){
+        return property.getOwner() != null && property.getOwner().equals(player);
+    }
+    private boolean canPlayerBuyProperty(Player player, Property property){
+        return property.getOwner() == null && property.isBuyable() && property.getPrice() < player.getPlayerBalance();
+    }
+    private boolean canPlayerMortgageTheProperty(Property property){
+        if(property.isMortgaged() || property.getNumberOfHouses() > 0 ) return false;
+        return true;
+    }
+    private void mortgageTheProperty(Player player, Property property){
+        property.setMortgaged(true);
+        property.setCanBuildOn(false);
+        player.setPlayerBalance(player.getPlayerBalance() + (property.getPrice()/2));
+    }
+    private boolean canPlayerUnmortgageProperty(Player player, Property property){
+        if(!property.isMortgaged() || player.getPlayerBalance() < (property.getPrice()*110/100)) return false;
+        return true;
+    }
+    private void unmortgageProperty(Player player, Property property){
+        property.setMortgaged(false);
+        property.setCanBuildOn(true);
+        player.setPlayerBalance(player.getPlayerBalance()-(property.getPrice()*110/100));
+    }
+    private boolean canPlayerSellHousesOnProperty(Player player, Property property){
+        String groups = property.getGrouping();
+        if(property.getNumberOfHouses() == 0) return false;
+        return true;
+    }
     private void buildHouseOnProperty(Player player, Property property){
         property.setNumberOfHouses(property.getNumberOfHouses()+1);
         player.setPlayerBalance(player.getPlayerBalance()-property.getHouseCost());
     }
 
     public boolean canBuildHouse(Player player, Property property){
-         return  property.getOwner()!=null && property.getOwner().equals(player) && canPlayerAffordToBuildHouseOnProperty(player, property)
+         return  checkOwner(player, property) && canPlayerAffordToBuildHouseOnProperty(player, property)
                 && isPlayerOwnerOfTheGroup(player, property) && property.isCanBuildOn() && canOneHouseBeBuiltOnProperty(property);
     }
     private boolean canPlayerAffordToBuildHouseOnProperty(Player player, Property property){
@@ -179,7 +206,7 @@ public class GameService {
     private boolean isPlayerOwnerOfTheGroup(Player player, Property property){
         String groups = property.getGrouping();
         for (Property p: board.getPropertiesByGroup(groups)){
-            if(p.getOwner()== null || !p.getOwner().equals(player)) return false;
+            if(p.getOwner()== null || !p.getOwner().equals(player) || p.isMortgaged()) return false;
         }
         return true;
     }
